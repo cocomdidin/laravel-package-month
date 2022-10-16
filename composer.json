@@ -1,0 +1,24 @@
+{
+    "name": "cocom/laravel-month",
+    "description": "list of month",
+    "type": "library",
+    "authors": [
+        {
+            "name": "cocom",
+            "email": "udn.chomr@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Cocom\\Month\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Cocom\\Month\\MonthServiceProvider"
+            ]
+        }
+    }
+}
