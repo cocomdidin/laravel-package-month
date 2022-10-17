@@ -49,7 +49,7 @@ class Month
      */
     public static function get()
     {
-        return self::monthLocale();
+        return json_decode(json_encode(self::monthLocale()));
     }
 
     /**
