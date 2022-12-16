@@ -6,6 +6,8 @@ use Illuminate\Support\Arr;
 
 class Month
 {
+    protected static $months = [];
+
     protected static $monthData = [
         'en' => [
             ['number' => 1, 'sortName' => 'Jan', 'name' => 'January'],
@@ -37,19 +39,43 @@ class Month
         ]
     ];
 
-    private static function monthLocale()
+    private static function setQuarter($months) {
+        Arr::set($months, '0.quarter', 1);
+        Arr::set($months, '1.quarter', 1);
+        Arr::set($months, '2.quarter', 1);
+        Arr::set($months, '3.quarter', 2);
+        Arr::set($months, '4.quarter', 2);
+        Arr::set($months, '5.quarter', 2);
+        Arr::set($months, '6.quarter', 3);
+        Arr::set($months, '7.quarter', 3);
+        Arr::set($months, '8.quarter', 3);
+        Arr::set($months, '9.quarter', 4);
+        Arr::set($months, '10.quarter', 4);
+        Arr::set($months, '11.quarter', 4);
+
+        return $months;
+    }
+
+    private static function monthInit()
     {
-        return isset(self::$monthData[app()->getLocale()]) ? self::$monthData[app()->getLocale()] : self::$monthData['en'];
+        if (!self::$months) {
+            self::$months = self::setQuarter(
+                isset(self::$monthData[app()->getLocale()])
+                ? self::$monthData[app()->getLocale()]
+                : self::$monthData['en']
+            );
+        }
     }
 
     /**
      * get
      *
-     * @return void
+     * @return object
      */
     public static function get()
     {
-        return json_decode(json_encode(self::monthLocale()));
+        self::monthInit();
+        return json_decode(json_encode(array_values(self::$months)));
     }
 
     /**
@@ -60,9 +86,9 @@ class Month
      */
     public static function getName(int $monthNumber) : string
     {
-        $monthArr = self::monthLocale();
+        self::monthInit();
 
-        $result = Arr::first($monthArr, function ($item) use ($monthNumber) {
+        $result = Arr::first(self::$months, function ($item) use ($monthNumber) {
             return ($item['number'] == $monthNumber);
         });
 
@@ -77,12 +103,32 @@ class Month
      */
     public static function getSortName(int $monthNumber) : string
     {
-        $monthArr = self::monthLocale();
+        self::monthInit();
 
-        $result = Arr::first($monthArr, function ($item) use ($monthNumber) {
+        $result = Arr::first(self::$months, function ($item) use ($monthNumber) {
             return ($item['number'] == $monthNumber);
         });
 
         return data_get($result, 'sortName');
+    }
+
+    /**
+     * get by quarter number
+     *
+     * @param  int $start start of quarter 1 - 4
+     * @param  int $end (optional) end of quarter 1 - 4
+     * @return object
+     */
+    public static function quarter(int $start, int $end = null)
+    {
+        self::monthInit();
+
+        self::$months = Arr::where(self::$months, function($month) use ($start, $end) {
+            return $end
+            ? $month['quarter'] >= $start && $month['quarter'] <= $end
+            : $month['quarter'] == $start;
+        });
+
+        return new self();
     }
 }
