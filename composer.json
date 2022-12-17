@@ -2,13 +2,17 @@
     "name": "cocom/laravel-month",
     "description": "list of month",
     "type": "library",
+    "keywords": ["month", "laravel"],
+    "license": "MIT",
     "authors": [
         {
             "name": "cocom",
             "email": "udn.chomr@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "laravel/framework": "^6.0"
+    },
     "autoload": {
         "psr-4": {
             "Cocom\\Month\\": "src/"
